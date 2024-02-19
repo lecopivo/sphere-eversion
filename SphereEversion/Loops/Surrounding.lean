@@ -413,6 +413,7 @@ def surroundingLoop : ℝ → Loop F :=
 variable {O_conn hp hb}
 
 /-- TODO: continuity note -/
+@[fun_prop]
 theorem continuous_surroundingLoop : Continuous ↿(surroundingLoop O_conn hp hb) :=
   Loop.roundTripFamily_continuous
 
@@ -527,9 +528,8 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
       (by simp_rw [mem_preimage, Metric.mem_ball, dist_self, hε.lt])
   have h4 : {y : E | ∀ z, dist (γ y 1 z) (γ x 1 z) < ε / 2} ∈ 𝓝 x := by
     refine IsOpen.mem_nhds ?_ fun z ↦ by simp_rw [dist_self, half_pos hε]
-    have hc : Continuous ↿fun y s ↦ dist (γ y 1 s) (γ x 1 s) :=
-      (h.cont.comp₃ continuous_fst continuous_const continuous_snd).dist
-        (h.cont.comp₃ continuous_const continuous_const continuous_snd)
+    have := h.cont
+    have hc : Continuous ↿fun y s ↦ dist (γ y 1 s) (γ x 1 s) := by fun_prop
     have : IsOpen {y : E | sSup ((fun z ↦ dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2} :=
       isOpen_lt (isCompact_Icc.continuous_sSup hc) continuous_const
     have hc : ∀ y, Continuous fun s ↦ dist (γ y 1 s) (γ x 1 s) := fun y ↦
@@ -562,6 +562,7 @@ protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b 
   source' := h.base x t
   target' := h.one x t
 
+@[fun_prop]
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
     (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) :=
@@ -704,6 +705,7 @@ end local_loops
 def ρ (t : ℝ) : ℝ :=
   projI <| 2 * (1 - t)
 
+@[fun_prop]
 theorem continuous_ρ : Continuous ρ :=
   continuous_projI.comp <| continuous_const.mul <| continuous_const.sub continuous_id
 
@@ -760,17 +762,17 @@ theorem sfHomotopy_one : sfHomotopy h₀ h₁ 1 = γ₁ := by
   simp only [sfHomotopy, Path.strans_zero, Icc.mk_zero, one_mul, ρ_eq_one_of_nonpos le_rfl,
     SurroundingFamily.path_extend_fract, projIcc_left, Loop.ofPath_apply, sub_self, h₁.projI]
 
+attribute [fun_prop] continuous_projI Continuous.path_strans
+
+@[fun_prop]
 theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
     [LocallyCompactSpace X] {τ t s : X → ℝ} {f : X → E} (hτ : Continuous τ) (hf : Continuous f)
     (ht : Continuous t) (hs : Continuous s) :
     Continuous fun x ↦ sfHomotopy h₀ h₁ (τ x) (f x) (t x) (s x) := by
   refine Continuous.ofPath _ _ _ ?_ hs
   refine Continuous.path_strans ?_ ?_ ?_ ?_ ?_ continuous_snd
-  · refine h₀.continuous_path hf.fst'.fst' ?_ continuous_snd
-    exact (continuous_ρ.comp hτ.fst'.fst').mul (continuous_projI.comp ht.fst'.fst')
-  · refine h₁.continuous_path hf.fst'.fst' ?_ continuous_snd
-    refine (continuous_ρ.comp ?_).mul (continuous_projI.comp ht.fst'.fst')
-    exact continuous_const.sub hτ.fst'.fst'
+  fun_prop
+  fun_prop
   · intro x s hs; simp only [projIcc_eq_zero, sub_nonpos] at hs
     simp only [hs, h₀.t₀, MulZeroClass.zero_mul, SurroundingFamily.path_apply, ρ_eq_zero_of_le]
   · intro x s hs; simp only [projIcc_eq_one] at hs
@@ -779,9 +781,9 @@ theorem Continuous.sfHomotopy {X : Type*} [UniformSpace X] [SeparatedSpace X]
 
 /-- In this lemmas and the lemmas below we add `FiniteDimensional ℝ E` so that we can conclude
  `LocallyCompactSpace E`. -/
-theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomotopy h₀ h₁) :=
-  Continuous.sfHomotopy continuous_fst continuous_snd.fst continuous_snd.snd.fst
-    continuous_snd.snd.snd
+@[fun_prop]
+theorem continuous_sfHomotopy [FiniteDimensional ℝ E] : Continuous ↿(sfHomotopy h₀ h₁) := by
+  fun_prop
 
 theorem surroundingFamily_sfHomotopy [FiniteDimensional ℝ E] (τ : ℝ) :
     SurroundingFamily g b (sfHomotopy h₀ h₁ τ) U := by
