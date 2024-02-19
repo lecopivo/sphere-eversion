@@ -91,6 +91,10 @@ theorem corrugation.support : support (𝒯 N γ) ⊆ Loop.support γ := fun x x
 theorem corrugation_eq_zero (x) (H : x ∉ Loop.support γ) : corrugation π N γ x = 0 :=
   nmem_support.mp fun hx ↦ H (corrugation.support π N γ hx)
 
+attribute [fun_prop]
+  continuous_parametric_intervalIntegral_of_continuous
+  contDiff_parametric_primitive_of_contDiff
+
 theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace E]
     {γ : ℝ → E → Loop F} {K : Set E} (hK : IsCompact K) (h_le : ∀ x, ∀ t ≤ 0, γ t x = γ 0 x)
     (h_ge : ∀ x, ∀ t ≥ 1, γ t x = γ 1 x) (hγ_cont : Continuous ↿γ) {ε : ℝ} (ε_pos : 0 < ε) :
@@ -98,11 +102,10 @@ theorem corrugation.c0_small_on [FirstCountableTopology E] [LocallyCompactSpace 
   set φ := fun (q : ℝ × E) t ↦ ∫ t in (0)..t, (γ q.1 q.2) t - (γ q.1 q.2).average
   -- TODO: this fails! (And the dsimp shouldn't be needed either.)
   --have cont' : Continuous ↿φ := by dsimp ; fun_prop
-  have cont' : Continuous ↿φ := by
-    refine continuous_parametric_intervalIntegral_of_continuous ?_ continuous_snd
-    refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
-    refine Loop.continuous_average ?_
-    exact hγ_cont.comp₃ continuous_fst.fst.fst.fst continuous_fst.fst.fst.snd continuous_snd
+  have cont' : Continuous ↿φ := by fun_prop 
+    -- refine (hγ_cont.comp₃ continuous_fst.fst.fst continuous_fst.fst.snd continuous_snd).sub ?_
+    -- refine Loop.continuous_average ?_
+    -- exact hγ_cont.comp₃ continuous_fst.fst.fst.fst continuous_fst.fst.fst.snd continuous_snd
   have hper : ∀ q, OnePeriodic (φ q) := fun _ ↦ per_corrugation _ fun _ _ ↦
     (hγ_cont.comp₃ continuous_const continuous_const continuous_id).intervalIntegrable _ _
   rcases cont'.bounded_on_compact_of_onePeriodic hper ((isCompact_Icc : IsCompact I).prod hK)
@@ -127,11 +130,12 @@ variable {γ}
 theorem corrugation.contDiff' {n : ℕ∞} {γ : G → E → Loop F} (hγ_diff : 𝒞 n ↿γ) {x : H → E}
     (hx : 𝒞 n x) {g : H → G} (hg : 𝒞 n g) : 𝒞 n fun h ↦ 𝒯 N (γ <| g h) <| x h := by
   unfold corrugation
-  sorry -- TODO: this fails! fun_prop
+  fun_prop
+
 
 theorem corrugation.contDiff [FiniteDimensional ℝ E] {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n (𝒯 N γ) := by
   unfold corrugation
-  sorry -- TODO: this fails! fun_prop
+  fun_prop
 
 notation "∂₁" => partialFDerivFst ℝ
 

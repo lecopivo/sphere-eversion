@@ -1,6 +1,8 @@
 import SphereEversion.ToMathlib.Equivariant
 import SphereEversion.ToMathlib.MeasureTheory.ParametricIntervalIntegral
 
+import Mathlib.Tactic.FunProp.ContDiff
+
 /-!
 # Basic definitions and properties of loops
 -/
@@ -28,7 +30,7 @@ structure Loop where
   toFun : ℝ → X
   per' : ∀ t, toFun (t + 1) = toFun t
 
-attribute [coe] Loop.toFun
+attribute [coe,fun_prop_coe] Loop.toFun
 
 instance : CoeFun (Loop X) fun _ ↦ ℝ → X :=
   ⟨fun γ ↦ γ.toFun⟩
@@ -428,8 +430,12 @@ theorem Loop.diff_normalize {γ : E → Loop F} (hγ_diff : 𝒞 1 ↿γ) (e : E
 
 variable {γ}
 
+@[fun_prop]
 theorem contDiff_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) : 𝒞 n fun x ↦ (γ x).average :=
   contDiff_parametric_primitive_of_contDiff hγ_diff contDiff_const 0
+
+@[fun_prop]
+theorem continuous_average (hγ_diff : Continuous ↿γ) : Continuous fun x ↦ (γ x).average := sorry
 
 theorem contDiff_sub_average {n : ℕ∞} (hγ_diff : 𝒞 n ↿γ) :
     𝒞 n ↿fun (x : E) (t : ℝ) ↦ (γ x) t - (γ x).average :=
