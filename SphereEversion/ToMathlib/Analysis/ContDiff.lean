@@ -161,7 +161,7 @@ theorem contDiff_parametric_symm [CompleteSpace E] [CompleteSpace F] {f : E → 
       left_inv := fun x ↦ by simp
       right_inv := fun x ↦ by simp }
   let ff x y := f x y
-  have hff : ContDiff 𝕜 ⊤ (uncurry ff) := hf
+  have hff : ContDiff 𝕜 ⊤ ↿ff := hf
   let d₁f := ∂₁ ff
   let Dφ : E × F → (E × F) ≃L[𝕜] E × G := fun x ↦
     (ContinuousLinearEquiv.refl 𝕜 E).lowerTriangular (d₁f x.1 x.2) (f' x.1 x.2)

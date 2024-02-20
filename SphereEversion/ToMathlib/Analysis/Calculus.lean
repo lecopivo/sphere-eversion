@@ -2,6 +2,10 @@ import Mathlib.Analysis.NormedSpace.Completion
 import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 import SphereEversion.ToMathlib.Topology.Misc
 
+import SphereEversion.FunPropConfig
+import SphereEversion.FunPropConfig2
+
+
 noncomputable section
 
 open Set Function Filter
@@ -159,37 +163,52 @@ nonrec theorem WithTop.le_self_mul {α : Type _} [CanonicallyOrderedCommMonoid �
     (n : WithTop α) ≤ (n * m : α) :=
   WithTop.coe_le_coe.mpr le_self_mul
 
+
+@[fun_prop]
 theorem ContDiff.contDiff_partial_fst {φ : E → F → G} {n : ℕ}
-    (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) : ContDiff 𝕜 n ↿(∂₁ 𝕜 φ) :=
-  ContDiff.fderiv (hF.comp <| contDiff_snd.prod contDiff_fst.snd) contDiff_fst le_rfl
+    (hF : ContDiff 𝕜 (n + 1) ↿φ) : ContDiff 𝕜 n ↿(∂₁ 𝕜 φ) := by
+  unfold partialFDerivFst
+  fun_prop (disch:=aesop)
 
 theorem ContDiff.contDiff_partial_fst_apply {φ : E → F → G} {n : ℕ}
-    (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) {x : E} : ContDiff 𝕜 n ↿fun x' y ↦ ∂₁ 𝕜 φ x' y x :=
-  (ContinuousLinearMap.apply 𝕜 G x).contDiff.comp hF.contDiff_partial_fst
+    (hF : ContDiff 𝕜 (n + 1) ↿φ) {x : E} : ContDiff 𝕜 n ↿fun x' y ↦ ∂₁ 𝕜 φ x' y x := by
+  fun_prop (disch:=aesop)
 
+@[fun_prop]
 theorem ContDiff.continuous_partial_fst {φ : E → F → G} {n : ℕ}
-    (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₁ 𝕜 φ) :=
-  h.contDiff_partial_fst.continuous
+    (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) ↿φ) : Continuous ↿(∂₁ 𝕜 φ) := by
+  unfold partialFDerivFst
+  fun_prop (disch:=aesop)
 
-theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
-    ContDiff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) :=
-  contDiff_top.mpr fun n ↦ (contDiff_top.mp hF (n + 1)).contDiff_partial_fst
+@[fun_prop]
+theorem ContDiff.contDiff_top_partial_fst {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ ↿φ) :
+    ContDiff 𝕜 ⊤ ↿(∂₁ 𝕜 φ) := by
+  --fun_prop (disch:=aesop) -- this fails only because aesop can't solve `↑?n + 1 ≤ ⊤`
+  unfold partialFDerivFst
+  fun_prop (disch:=aesop)
 
+@[fun_prop]
 theorem ContDiff.contDiff_partial_snd {φ : E → F → G} {n : ℕ}
-    (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) : ContDiff 𝕜 n ↿(∂₂ 𝕜 φ) :=
-  ContDiff.fderiv (hF.comp <| contDiff_fst.fst.prod contDiff_snd) contDiff_snd le_rfl
+    (hF : ContDiff 𝕜 (n + 1) ↿φ) : ContDiff 𝕜 n ↿(∂₂ 𝕜 φ) := by
+  unfold partialFDerivSnd
+  fun_prop (disch:=aesop)
+
 
 theorem ContDiff.contDiff_partial_snd_apply {φ : E → F → G} {n : ℕ}
-    (hF : ContDiff 𝕜 (n + 1) (uncurry φ)) {y : F} : ContDiff 𝕜 n ↿fun x y' ↦ ∂₂ 𝕜 φ x y' y :=
-  (ContinuousLinearMap.apply 𝕜 G y).contDiff.comp hF.contDiff_partial_snd
+    (hF : ContDiff 𝕜 (n + 1) ↿φ) {y : F} : ContDiff 𝕜 n ↿fun x y' ↦ ∂₂ 𝕜 φ x y' y := by
+  fun_prop (disch:=aesop)
 
+@[fun_prop]
 theorem ContDiff.continuous_partial_snd {φ : E → F → G} {n : ℕ}
-    (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) <| uncurry φ) : Continuous ↿(∂₂ 𝕜 φ) :=
-  h.contDiff_partial_snd.continuous
+    (h : ContDiff 𝕜 ((n + 1 : ℕ) : ℕ∞) ↿φ) : Continuous ↿(∂₂ 𝕜 φ) := by
+  unfold partialFDerivSnd
+  fun_prop (disch:=aesop)
 
-theorem ContDiff.contDiff_top_partial_snd {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ (uncurry φ)) :
-    ContDiff 𝕜 ⊤ ↿(∂₂ 𝕜 φ) :=
-  contDiff_top.mpr fun n ↦ (contDiff_top.mp hF (n + 1)).contDiff_partial_snd
+@[fun_prop]
+theorem ContDiff.contDiff_top_partial_snd {φ : E → F → G} (hF : ContDiff 𝕜 ⊤ ↿φ) :
+    ContDiff 𝕜 ⊤ ↿(∂₂ 𝕜 φ) := by
+  unfold partialFDerivSnd
+  fun_prop (disch:=aesop)
 
 end Calculus
 

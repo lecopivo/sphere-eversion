@@ -226,6 +226,7 @@ theorem range_ofPath {x : X} (γ : Path x x) : range (ofPath γ) = range γ := b
     simp only [this, γ.extend_extends t.2]
 
 /-- `Loop.ofPath` is continuous, general version. -/
+@[fun_prop]
 theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path (x i) (x i)) (hγ : Continuous ↿γ)
     (ht : Continuous t) : Continuous fun i ↦ ofPath (γ i) (t i) := by
   change Continuous fun i ↦ (fun s ↦ (γ s).extend) i (fract (t i))
@@ -238,7 +239,7 @@ theorem _root_.Continuous.ofPath (x : X → Y) (t : X → ℝ) (γ : ∀ i, Path
 
 /-- `Loop.ofPath` is continuous, where the endpoints of `γ` are fixed. TODO: remove -/
 theorem ofPath_continuous_family {x : Y} (γ : X → Path x x) (h : Continuous ↿γ) :
-    Continuous ↿fun s ↦ ofPath <| γ s :=
+    Continuous ↿fun s ↦ ofPath <| γ s := 
   Continuous.ofPath _ _ (fun i : X × ℝ ↦ γ i.1) (h.comp <| continuous_fst.prod_map continuous_id)
     continuous_snd
 

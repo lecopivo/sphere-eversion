@@ -532,8 +532,7 @@ protected theorem surrounds_of_close_univ [FiniteDimensional ℝ E] [FiniteDimen
     have hc : Continuous ↿fun y s ↦ dist (γ y 1 s) (γ x 1 s) := by fun_prop
     have : IsOpen {y : E | sSup ((fun z ↦ dist (γ y 1 z) (γ x 1 z)) '' I) < ε / 2} :=
       isOpen_lt (isCompact_Icc.continuous_sSup hc) continuous_const
-    have hc : ∀ y, Continuous fun s ↦ dist (γ y 1 s) (γ x 1 s) := fun y ↦
-      hc.comp₂ continuous_const continuous_id
+    have hc : ∀ y, Continuous fun s ↦ dist (γ y 1 s) (γ x 1 s) := by fun_prop
     simp_rw [isCompact_Icc.sSup_lt_iff_of_continuous (nonempty_Icc.mpr zero_le_one)
         (hc _).continuousOn] at this
     convert this using 1
@@ -557,16 +556,18 @@ family into the family of paths. -/
 @[simps]
 protected def path (h : SurroundingFamily g b γ U) (x : E) (t : ℝ) : Path (b x) (b x) where
   toFun s := γ x t s
-  continuous_toFun :=
-    (h.cont.comp₃ continuous_const continuous_const continuous_id).comp continuous_subtype_val
+  continuous_toFun := by have := h.cont; fun_prop
   source' := h.base x t
   target' := h.one x t
 
 @[fun_prop]
 theorem continuous_path {X : Type*} [TopologicalSpace X] (h : SurroundingFamily g b γ U)
     {t : X → ℝ} {f : X → E} {s : X → I} (hf : Continuous f) (ht : Continuous t)
-    (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) :=
-  h.cont.comp₃ hf ht hs.subtype_val
+    (hs : Continuous s) : Continuous fun x ↦ h.path (f x) (t x) (s x) := by 
+  dsimp[SurroundingFamily.path]
+  have := h.cont
+  fun_prop
+
 
 @[simp]
 theorem path_extend_fract (h : SurroundingFamily g b γ U) (t s : ℝ) (x : E) :
@@ -655,7 +656,7 @@ theorem local_loops [FiniteDimensional ℝ F] {x₀ : E} (hΩ_op : ∃ U ∈ �
   have hδ : Continuous ↿δ := by
     unfold_let δ
     dsimp only [HasUncurry.uncurry, Loop.vadd_apply]
-    exact (hb.fst'.sub continuous_const).add h1γ.snd'
+    fun_prop
   have hδx₀ : ∀ t s, δ x₀ t s = γ t s := by
     intro t s
     simp only [zero_add, Loop.vadd_apply, sub_self]

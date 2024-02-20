@@ -195,17 +195,9 @@ local notation "∞" => (⊤ : ℕ∞)
 
 theorem Remainder.smooth {γ : G → E → Loop F} (hγ_diff : 𝒞 ∞ ↿γ) {x : H → E} (hx : 𝒞 ∞ x)
     {g : H → G} (hg : 𝒞 ∞ g) : 𝒞 ∞ fun h ↦ R N (γ <| g h) <| x h := by
-  apply ContDiff.const_smul
-  apply contDiff_parametric_primitive_of_contDiff
-  · let ψ : E → H × ℝ → F := fun x q ↦ (γ (g q.1) x).normalize q.2
-    change 𝒞 ⊤ fun q : H × ℝ ↦ ∂₁ ψ (x q.1) (q.1, q.2)
-    refine (ContDiff.contDiff_top_partial_fst ?_).comp₂ hx.fst' (contDiff_fst.prod contDiff_snd)
-    dsimp [Loop.normalize]
-    apply ContDiff.sub
-    apply hγ_diff.comp₃ hg.fst'.snd' contDiff_fst contDiff_snd.snd
-    apply contDiff_average
-    exact hγ_diff.comp₃ hg.fst'.snd'.fst' contDiff_fst.fst' contDiff_snd
-  · exact contDiff_const.mul (π.contDiff.comp hx)
+  unfold corrugation.remainder partialFDerivFst 
+  simp_rw[Loop.normalize_apply]
+  fun_prop (disch:=aesop)
 
 theorem remainder_c0_small_on {K : Set E} (hK : IsCompact K) (hγ_diff : 𝒞 1 ↿γ) {ε : ℝ}
     (ε_pos : 0 < ε) : ∀ᶠ N in atTop, ∀ x ∈ K, ‖R N γ x‖ < ε := by
